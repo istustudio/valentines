@@ -1,105 +1,212 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For You 💖</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You 💖</title>
+    <style>
+        :root {
+            --pink-bg: #ffe4e1;
+            --neon-pink: #ff00ff;
+            --neon-purple: #9d00ff;
+        }
 
-<style>
-body {
-    margin: 0;
-    height: 100vh;
-    background: #ffe4e1;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-}
+        body {
+            margin: 0;
+            height: 100vh;
+            background: var(--pink-bg);
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
 
-/* CARD CU CONTUR NEON */
-.card-wrapper {
-    position: relative;
-    padding: 4px;
-    border-radius: 20px;
-}
+        /* CARD CU CONTUR NEON SUBȚIRE */
+        .card-wrapper {
+            position: relative;
+            padding: 3px; /* Grosimea conturului */
+            border-radius: 20px;
+            z-index: 10;
+            overflow: hidden;
+        }
 
-.card-wrapper::before {
-    content: "";
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: conic-gradient(
-        transparent,
-        #ff00ff,
-        #9d00ff,
-        #ff00ff,
-        transparent
-    );
-    animation: rotate 4s linear infinite;
-}
+        .card-wrapper::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                transparent,
+                var(--neon-pink),
+                var(--neon-purple),
+                var(--neon-pink),
+                transparent
+            );
+            animation: rotate 4s linear infinite;
+            z-index: -1;
+        }
 
-@keyframes rotate {
-    to { transform: rotate(360deg); }
-}
+        @keyframes rotate {
+            to { transform: rotate(360deg); }
+        }
 
-.card {
-    position: relative;
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    width: 320px;
-    text-align: center;
-    z-index: 1;
-}
+        .card {
+            position: relative;
+            background: rgba(255,255,255,0.95);
+            border-radius: 17px;
+            padding: 25px;
+            width: 300px;
+            text-align: center;
+            z-index: 1;
+        }
 
-img {
-    width: 100%;
-    border-radius: 10px;
-}
+        img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
 
-h1 {
-    color: #d63384;
-}
+        h1 {
+            color: #d63384;
+            font-size: 1.4rem;
+            margin: 10px 0;
+        }
 
-button {
-    margin-top: 15px;
-    padding: 12px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    background: #ff69b4;
-    color: white;
-}
-</style>
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #yes-btn { background-color: #4CAF50; color: white; font-size: 16px; }
+        #no-btn { background-color: #f44336; color: white; font-size: 16px; }
+
+        .yay-text {
+            font-size: 2rem;
+            color: #ff1493;
+            font-weight: bold;
+            animation: pop 0.5s ease;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0); }
+            80% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* PARTICULE */
+        .falling-item {
+            position: absolute;
+            top: -50px;
+            user-select: none;
+            pointer-events: none;
+            animation: fall linear forwards;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+    </style>
 </head>
-
 <body>
 
-<!-- AUDIO REAL -->
-<audio id="music">
+<audio id="bg-music" loop>
     <source src="feelz.mp3" type="audio/mpeg">
 </audio>
 
 <div class="card-wrapper">
     <div class="card">
-        <img src="https://media.tenor.com/VIChDQ6ejRQAAAAj/jumping-bear-hearts-no-png.gif">
-        <h1>Will you be my Valentine? 💘</h1>
-        <button onclick="playMusic()">▶ Pornește muzica</button>
+        <div id="question-box">
+            <img src="https://media.tenor.com/VIChDQ6ejRQAAAAj/jumping-bear-hearts-no-png.gif" alt="Cute bear">
+            <h1>Will you be my Valentine? 💘</h1>
+            <div class="btn-group">
+                <button id="yes-btn">Yes</button>
+                <button id="no-btn">No</button>
+            </div>
+        </div>
+
+        <div id="success-box" style="display: none;">
+            <img src="https://media.tenor.com/f1xnRxTRxLAAAAAj/bears-with-kisses-bg.gif" alt="Kisses">
+            <div class="yay-text">Yay!!! 💖🎉</div>
+            <p style="color:#d63384; font-weight: bold;">Love u pookie!</p>
+        </div>
     </div>
 </div>
 
 <script>
-function playMusic() {
-    const audio = document.getElementById("music");
-    audio.volume = 0.7;
-    audio.play().catch(() => {
-        alert("Apasă din nou pe buton pentru sunet");
+    const audio = document.getElementById("bg-music");
+    const yesBtn = document.getElementById("yes-btn");
+    const noBtn = document.getElementById("no-btn");
+    const questionBox = document.getElementById("question-box");
+    const successBox = document.getElementById("success-box");
+
+    // 1. Funcție particule
+    function createFallingItem() {
+        const item = document.createElement("div");
+        item.classList.add("falling-item");
+        const symbols = ['❤️','💖','🌹','✨'];
+        item.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+        item.style.left = Math.random() * 100 + 'vw';
+        item.style.fontSize = (Math.random() * 20 + 15) + 'px';
+        item.style.animationDuration = (Math.random() * 3 + 3) + 's';
+        document.body.appendChild(item);
+        setTimeout(() => item.remove(), 6000);
+    }
+
+    // Pornim ploaia de particule imediat
+    setInterval(createFallingItem, 350);
+
+    // 2. Logică butoane
+    let noClicks = 0;
+    const NO_PHRASES = [
+        "No 💔", 
+        "Pretty please? 🥺", 
+        "But we'd be so cute! 💕", 
+        "One more chance?", 
+        "Don't break my heart :("
+    ];
+
+    noBtn.addEventListener('click', () => {
+        // Pornim muzica la interacțiune
+        audio.play().catch(() => {});
+        
+        noClicks++;
+        // Mărim butonul Yes
+        const newSize = 16 + (noClicks * 18);
+        yesBtn.style.fontSize = newSize + 'px';
+        
+        // Schimbăm textul la No
+        noBtn.innerText = NO_PHRASES[Math.min(noClicks - 1, NO_PHRASES.length - 1)];
     });
-}
+
+    yesBtn.addEventListener('click', () => {
+        audio.play().catch(() => {});
+        questionBox.style.display = 'none';
+        successBox.style.display = 'block';
+        
+        // Explozie de inimioare la final
+        for(let i=0; i<40; i++) setTimeout(createFallingItem, i*50);
+    });
+
+    // Pornim muzica la orice click pe ecran (siguranță)
+    document.addEventListener('click', () => {
+        audio.play().catch(() => {});
+    }, { once: true });
 </script>
 
 </body>
