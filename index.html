@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You 💖</title>
+
+<style>
+:root {
+    --pink-bg: #ffe4e1;
+    --neon-pink: #ff00ff;
+    --neon-purple: #9d00ff;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    background: var(--pink-bg);
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* START SCREEN */
+#start-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--pink-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    transition: opacity .5s;
+}
+
+#start-btn {
+    padding: 15px 30px;
+    font-size: 20px;
+    background: #ff69b4;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    50% { transform: scale(1.05); }
+}
+
+/* FALLING ITEMS */
+.falling-item {
+    position: absolute;
+    top: -40px;
+    user-select: none;
+    pointer-events: none;
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
